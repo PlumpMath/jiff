@@ -22,7 +22,6 @@
 ;; ------
 
 (defn files-from [lines]
-  (println lines)
   (->> lines
        (partition-by #(re-find index-re %))
        (partition 2)
