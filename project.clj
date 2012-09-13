@@ -3,5 +3,6 @@
   :description "Simple diff sequences"
   :dependencies [[org.clojure/clojure "1.4.0"]]
   :dev-dependencies [[midje "1.4.0"]
-                     [lein-midje "1.0.9"]])
+                     [lein-midje "1.0.9"]]
+  :main jiff.core)
 
