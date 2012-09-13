@@ -1,0 +1,84 @@
+Index: release/library/smarty/plugins/function.link.php
+===================================================================
+--- release/library/smarty/plugins/function.link.php	(revision 472)
++++ release/library/smarty/plugins/function.link.php	(revision 473)
+@@ -30,7 +30,16 @@
+ 	$form = v($params,'form');
+ 	$class = v($params,'class');
+ 	$image = v( $params, 'image' );
++	$id = '';
+ 
++	// select the link maybe?
++	if ( function_exists('smutty_function_linkSelectText') )
++		if ( $select = smutty_function_linkSelectText() )
++			if ( $select['text'] == $text ) {
++				$id = W( $select, 'id', $id );
++				$class = W( $select, 'class', $class );
++			}
++
+ 	// link element (text ot image)
+ 	$linkElement = $image
+ 		? Smutty_Smarty::htmlElement( 'img', array(
+@@ -74,7 +83,8 @@
+ 		return Smutty_Smarty::htmlElement( 'a', array(
+ 				'href' => $url . ( $queryString ? "?$queryString" : '' ),
+ 				'class' => $class,
+-				'title' => v($params,'title')
++				'title' => v($params,'title'),
++				'id' => $id
+ 			), $smarty ) .
+ 			$linkElement . '</a>';
+ 	}
+Index: release/library/smarty/plugins/function.linkSelect.php
+===================================================================
+--- release/library/smarty/plugins/function.linkSelect.php	(revision 0)
++++ release/library/smarty/plugins/function.linkSelect.php	(revision 473)
+@@ -0,0 +1,27 @@
++<?
++
++function smutty_function_linkSelectText( $params = null ) {
++
++	static $data;
++
++	if ( $params != null )
++		$data = array(
++			'text' => v( $params, 'text' ),
++			'id' => w( $params, 'id', 'current' ),
++			'class' => v( $params, 'class' )
++		);
++
++	return $data;
++
++}
++
++function smutty_function_linkSelect( $params, $smarty ) {
++	smutty_function_linkSelectText( $params );
++}
++
++function smarty_function_linkSelect( $params, $smarty ) {
++
++	smutty_function_linkSelect( $params, $smarty );
++}
++
++?>
+\ No newline at end of file
+Index: tests/Smutty_SmartyPluginsTest.php
+===================================================================
+--- tests/Smutty_SmartyPluginsTest.php	(revision 472)
++++ tests/Smutty_SmartyPluginsTest.php	(revision 473)
+@@ -16,6 +16,15 @@
+ 		);
+ 	}
+ 
++	function testLinkSelect() {
++		$this->runPlugin( 'linkSelect', array( 'text' => 'Foo',
++			'id' => 'foo', 'class' => 'bar' ) );
++		$sel = smutty_function_linkSelectText();
++		$this->assertTrue( $sel['text'] == 'Foo' );
++		$this->assertTrue( $sel['id'] == 'foo' );
++		$this->assertTrue( $sel['class'] == 'bar' );
++	}
++
+ 	function testJavascript() {
+ 		$options = array(
+ 			'file' => 'bar'
