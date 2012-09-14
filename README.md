@@ -5,11 +5,18 @@ Jiff
 Jiff is a small library for transforming diffs into Clojure sequences
 of data structures.
 
+Installation
+------------
+
+Jiff is available from Clojars.
+
 Usage
 -----
 
 ```clojure
-(:use jiff.core)
+(ns my.ns
+  (:use jiff.vcs)
+  (:require jiff.svn))
 
 (def files (jiff-seq {:vcs :svn
                       :from "svn://server/tags/1.1"
